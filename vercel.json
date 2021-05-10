@@ -1,0 +1,7 @@
+{
+  "name": "DB_URI",
+  "version": 1,
+  "env": {
+    "DB_URI": "@DB_URI"
+  }
+}
