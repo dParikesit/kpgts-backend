@@ -7,7 +7,7 @@ mongoose.connect(process.env.DB_URI, {useNewUrlParser: true, useUnifiedTopology:
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
 
-const userRoute = require('./routes/user')
+const userRoute = require('./api/routes/user')
 app.use(userRoute)
 
 app.listen(3000 || process.env.PORT, ()=>{

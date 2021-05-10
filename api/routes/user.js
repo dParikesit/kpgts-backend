@@ -1,6 +1,9 @@
+require('dotenv').config()
 const router = require('express').Router()
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+const cookieParser = require('cookie-parser')
 
 const User = require('../models/user')
 
@@ -54,11 +57,20 @@ router.post('/user/login', (req, res, next)=>{
             message: 'Password incorrect!'
           })
         }
-        else {
-          res.status(500).json({
-            message: 'Login successful'
-          })
-        }
+        const token = jwt.sign(
+          {
+            userId: user[0]._id,
+            role: user[0].role
+          },
+          process.env.JWT_SECRET
+        )
+        res.status(500).cookie('token', token, {
+          maxAge: 3*24*3600,
+          httpOnly: true
+        }).json({
+          message: 'Login successful',
+          role: user[0].role
+        })
       })
     }
   )
