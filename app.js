@@ -19,6 +19,6 @@ app.use(express.urlencoded({extended: false}))
 const userRoute = require('./api/routes/user')
 app.use(userRoute)
 
-app.listen(3000 || process.env.PORT, ()=>{
+app.listen(process.env.PORT || 3000, ()=>{
   console.log('Process has started!')
 })
