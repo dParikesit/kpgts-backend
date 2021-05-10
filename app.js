@@ -1,5 +1,6 @@
 require('dotenv').config()
 const cors = require('cors')
+const cookieParser = require('cookie-parser')
 const express = require('express')
 const app = express()
 const mongoose = require('mongoose');
@@ -11,7 +12,7 @@ db.once('open', function() {
   console.log('DB Connection succeed')
 });
 
-
+app.use(cookieParser(process.env.COOKIE_SECRET))
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))

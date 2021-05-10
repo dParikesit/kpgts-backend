@@ -3,8 +3,8 @@ const router = require('express').Router()
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const cookieParser = require('cookie-parser')
 
+const authChecker = require('../middleware/auth-checker')
 const User = require('../models/user')
 
 router.post('/user/register', (req,res,next)=>{
@@ -64,9 +64,10 @@ router.post('/user/login', (req, res, next)=>{
           },
           process.env.JWT_SECRET
         )
-        res.status(500).cookie('token', token, {
+        res.status(200).cookie('token', token, {
           maxAge: 3*24*3600,
-          httpOnly: true
+          httpOnly: true,
+          signed: true,
         }).json({
           message: 'Login successful',
           role: user[0].role
@@ -74,6 +75,15 @@ router.post('/user/login', (req, res, next)=>{
       })
     }
   )
+})
+
+router.post('/user/logout',authChecker, (req, res)=>{
+  res.clearCookie('token', {
+    httpOnly: true,
+    signed: true
+  }).status(200).json({
+    message: 'Logout successful',
+  })
 })
 
 module.exports = router
