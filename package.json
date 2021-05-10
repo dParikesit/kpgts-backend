@@ -1,6 +1,17 @@
 {
   "name": "kpgts-backend",
   "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT"
+  "main": "app.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^9.0.1",
+    "express": "^4.17.1",
+    "mongoose": "^5.12.7",
+    "nodemon": "^2.0.7"
+  }
 }
