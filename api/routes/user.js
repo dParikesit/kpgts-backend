@@ -6,6 +6,7 @@ const jwt = require('jsonwebtoken')
 
 const authChecker = require('../middleware/auth-checker')
 const User = require('../models/user')
+const UserDetail = require('../models/user-detail')
 
 router.post('/user/register', (req,res,next)=>{
   bcrypt.hash(req.body.password, 10, (err,hash)=>{
@@ -84,6 +85,29 @@ router.post('/user/logout',authChecker, (req, res)=>{
   }).status(200).json({
     message: 'Logout successful',
   })
+})
+
+router.post('/user/detail', authChecker, (req, res)=>{
+  let user = {}
+  user.email = req.body.email
+  req.body.sekolah ? (user.sekolah = req.body.sekolah) : null;
+  req.body.telepon ? (user.telepon = req.body.telepon) : null;
+
+  let newUserDetail = new UserDetail (user)
+  newUserDetail.save().then(
+    result => {
+      res.status(200).json({
+        message: 'Details saved!',
+        result: result
+      })
+    }
+  ).catch (
+    err => {
+      res.status(500).json({
+        error: err
+      })
+    }
+  )
 })
 
 module.exports = router
