@@ -10,7 +10,10 @@ const userDetailSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.String,
   },
   telepon: {
-    type: mongoose.Schema.Types.String
+    type: mongoose.Schema.Types.String,
+  },
+  mapel: {
+    type: mongoose.Schema.Types.String,
   }
 })
 

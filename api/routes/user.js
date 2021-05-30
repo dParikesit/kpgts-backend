@@ -9,10 +9,11 @@ const User = require('../models/user')
 const UserDetail = require('../models/user-detail')
 
 router.post('/user/register', (req,res,next)=>{
+  console.log(req.body)
   bcrypt.hash(req.body.password, 10, (err,hash)=>{
     if(err){
       res.status(500).json({
-        message: 'Internal server error'
+        message: 'Hashing error'
       })
     }else{
       const newUser = new User({
@@ -63,12 +64,16 @@ router.post('/user/login', (req, res, next)=>{
             userId: user[0]._id,
             role: user[0].role
           },
-          process.env.JWT_SECRET
+          process.env.JWT_SECRET,
+          {
+            expiresIn: '3d'
+          }
         )
         res.status(200).cookie('token', token, {
-          maxAge: 3*24*3600,
+          expires: new Date(Date.now() + (3*24*60*60000)),
           httpOnly: true,
           signed: true,
+          sameSite: false,
         }).json({
           message: 'Login successful',
           role: user[0].role
@@ -92,22 +97,43 @@ router.post('/user/detail', authChecker, (req, res)=>{
   user.email = req.body.email
   req.body.sekolah ? (user.sekolah = req.body.sekolah) : null;
   req.body.telepon ? (user.telepon = req.body.telepon) : null;
+  req.body.mapel ? (user.mapel = req.body.mapel) : null;
 
-  let newUserDetail = new UserDetail (user)
-  newUserDetail.save().then(
+  UserDetail.findOneAndUpdate({email: user.email}, user, {upsert:true}).then(
     result => {
       res.status(200).json({
         message: 'Details saved!',
         result: result
       })
-    }
-  ).catch (
-    err => {
-      res.status(500).json({
-        error: err
-      })
+    }).catch (
+      err => {
+        res.status(500).json({
+          error: err
+        })
+      }
+    )
+})
+
+
+router.get('/user/detail', authChecker, (req,res)=>{
+  detail = {}
+  User.findOne({_id: req.user.userId}).then(
+    user => {
+      detail.email = user.email
+      UserDetail.findOne({email: detail.email}).then(
+        userdetail=>{
+          userdetail.sekolah ? (detail.sekolah = userdetail.sekolah) : detail.sekolah=null;
+          userdetail.telepon ? (detail.telepon = userdetail.telepon) : detail.telepon=null;
+          userdetail.mapel ? (detail.mapel = userdetail.mapel) : detail.mapel=null;
+          console.log(detail)
+          res.status(200).json(detail)
+        }
+      ).catch(
+        err=>{
+          res.status(200).json(detail)
+        }
+      )
     }
   )
 })
-
 module.exports = router
