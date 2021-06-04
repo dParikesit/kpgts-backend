@@ -71,7 +71,8 @@ router.post("/user/login", (req, res, next) => {
           expires: new Date(Date.now() + 3 * 24 * 60 * 60000),
           httpOnly: true,
           signed: true,
-          sameSite: false,
+          sameSite: "none",
+          secure: true,
         })
         .json({
           message: "Login successful",
