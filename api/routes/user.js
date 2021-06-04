@@ -9,7 +9,6 @@ const User = require("../models/user");
 const UserDetail = require("../models/user-detail");
 
 router.post("/user/register", (req, res, next) => {
-  console.log(req.body);
   bcrypt.hash(req.body.password, 10, (err, hash) => {
     if (err) {
       res.status(500).json({
@@ -50,7 +49,6 @@ router.post("/user/login", (req, res, next) => {
         message: "User not found!",
       });
     }
-    console.log(user[0].password);
     bcrypt.compare(req.body.password, user[0].password, (err, result) => {
       if (result == false) {
         res.status(401).json({
@@ -131,7 +129,6 @@ router.get("/user/detail", authChecker, (req, res) => {
         userdetail.mapel
           ? (detail.mapel = userdetail.mapel)
           : (detail.mapel = null);
-        console.log(detail);
         res.status(200).json(detail);
       })
       .catch((err) => {
