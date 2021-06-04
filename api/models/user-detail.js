@@ -1,10 +1,10 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
 const userDetailSchema = new mongoose.Schema({
   email: {
     type: mongoose.Schema.Types.String,
     unique: true,
-    required: true
+    required: true,
   },
   sekolah: {
     type: mongoose.Schema.Types.String,
@@ -14,7 +14,7 @@ const userDetailSchema = new mongoose.Schema({
   },
   mapel: {
     type: mongoose.Schema.Types.String,
-  }
-})
+  },
+});
 
-module.exports = mongoose.model('userDetail',userDetailSchema)
+module.exports = mongoose.model("userDetail", userDetailSchema);
