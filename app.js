@@ -8,7 +8,7 @@ mongoose.connect(process.env.DB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
-  useFindAndModify: true,
+  useFindAndModify: false,
 });
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -29,6 +29,9 @@ app.use(express.urlencoded({ extended: false }));
 
 const userRoute = require("./api/routes/user");
 app.use(userRoute);
+
+const postRoute = require("./api/routes/post");
+app.use(postRoute);
 
 app.listen(process.env.PORT || 3001, () => {
   console.log("Process has started!");
