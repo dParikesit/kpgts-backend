@@ -67,6 +67,12 @@ router.get("/post", isAdmin, (req, res, next) => {
 });
 
 router.get("/post/:slug", isAdmin, (req, res) => {
-  slug = req.params.slug;
+  Post.findOne({slug: req.params.slug}).then((post)=>{
+    res.status(200).json(post)
+  }).catch((err)=>{
+    res.status(404).json({
+      message: err
+    })
+  })
 });
 module.exports = router;
