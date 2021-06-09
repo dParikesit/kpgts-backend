@@ -6,6 +6,10 @@ const userDetailSchema = new mongoose.Schema({
     unique: true,
     required: true,
   },
+  nama: {
+    type: String,
+    required: true,
+  },
   sekolah: {
     type: mongoose.Schema.Types.String,
   },
