@@ -2,18 +2,21 @@ const mongoose = require("mongoose");
 
 const userDetailSchema = new mongoose.Schema({
   email: {
-    type: mongoose.Schema.Types.String,
+    type: String,
     unique: true,
     required: true,
   },
   sekolah: {
-    type: mongoose.Schema.Types.String,
+    type: String,
+    default: ""
   },
   telepon: {
-    type: mongoose.Schema.Types.String,
+    type: String,
+    default: ""
   },
   mapel: {
-    type: mongoose.Schema.Types.String,
+    type: String,
+    default: ""
   },
 });
 
