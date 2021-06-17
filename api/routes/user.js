@@ -19,6 +19,7 @@ router.get("/admin/dashboard/all", adminChecker, (req, res) => {
 // User
 router.post("/user/register", (req, res, next) => {
   bcrypt.hash(req.body.password, 10, (err, hash) => {
+    console.log(req.body.password)
     if (err) {
       res.status(500).json({
         message: "Hashing error",
@@ -75,7 +76,6 @@ router.post("/user/login", (req, res, next) => {
         }
       );
       res
-        .status(200)
         .cookie("token", token, {
           expires: new Date(Date.now() + 3 * 24 * 60 * 60000),
           httpOnly: true,
@@ -83,6 +83,7 @@ router.post("/user/login", (req, res, next) => {
           sameSite: "none",
           secure: true,
         })
+        .status(200)
         .json({
           message: "Login successful",
           role: user[0].role,
@@ -106,9 +107,10 @@ router.post("/user/logout", authChecker, (req, res) => {
 router.post("/user/detail", authChecker, (req, res) => {
   let user = {};
   user.email = req.body.email;
-  req.body.sekolah ? (user.sekolah = req.body.sekolah) : null;
-  req.body.telepon ? (user.telepon = req.body.telepon) : null;
-  req.body.mapel ? (user.mapel = req.body.mapel) : null;
+  user.name = req.body.name
+  user.sekolah = req.body.sekolah
+  user.telepon = req.body.telepon
+  user.mapel = req.body.mapel
 
   UserDetail.findOneAndUpdate({ email: user.email }, user, { upsert: true })
     .then((result) => {
