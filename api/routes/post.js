@@ -5,51 +5,45 @@ const multer = require("multer");
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 const authChecker = require("../middleware/auth-checker");
+const adminChecker = require("../middleware/admin-checker");
 const Post = require("../models/post");
 
-const isAdmin = function(req, res, next) {
-  if (req.user.role == "Admin") {
-    next;
-  } else {
-    return res.status(401).json({
-      error: 'User not authenticated'
+router.post(
+  "/post",
+  authChecker,
+  adminChecker,
+  upload.single("image"),
+  (req, res, next) => {
+    let newPost = new Post({
+      title: req.body.title,
+      slug: req.body.slug,
+      description: req.body.description,
+      content: req.body.content,
+      date: req.body.date,
+      image: {
+        data: req.file.buffer,
+        encoding: req.file.encoding,
+        mimetype: req.file.mimetype,
+        ext: req.file.originalname.split(".")[1],
+      },
     });
-  }
-}
 
-router.post("/post", authChecker, isAdmin, upload.single("image"), (req, res, next) => {
-  let newPost = new Post({
-    title: req.body.title,
-    slug: req.body.slug,
-    description: req.body.description,
-    content: req.body.content,
-    date: req.body.date,
-  });
-
-  if (req.file) {
-    newPost["image"] = {
-      data: req.file.buffer,
-      encoding: req.file.encoding,
-      mimetype: req.file.mimetype,
-      ext: req.file.originalname.split(".")[1],
-    };
-  }
-
-  newPost
-    .save()
-    .then((result) => {
-      res.status(200).json({
-        message: newPost.title,
-      });
-    })
-    .catch((err) =>
-      res.status(500).json({
-        message: err,
+    newPost
+      .save()
+      .then((result) => {
+        res.status(200).json({
+          message: newPost.title,
+        });
       })
-    );
-});
+      .catch((err) =>
+        res.status(500).json({
+          message: err,
+        })
+      );
+  }
+);
 
-router.get("/post", isAdmin, (req, res, next) => {
+router.get("/post", adminChecker, (req, res, next) => {
   let postsList;
   Post.find({})
     .sort({ date: -1 })
@@ -66,13 +60,15 @@ router.get("/post", isAdmin, (req, res, next) => {
     });
 });
 
-router.get("/post/:slug", isAdmin, (req, res) => {
-  Post.findOne({slug: req.params.slug}).then((post)=>{
-    res.status(200).json(post)
-  }).catch((err)=>{
-    res.status(404).json({
-      message: err
+router.get("/post/:slug", adminChecker, (req, res) => {
+  Post.findOne({ slug: req.params.slug })
+    .then((post) => {
+      res.status(200).json(post);
     })
-  })
+    .catch((err) => {
+      res.status(404).json({
+        message: err,
+      });
+    });
 });
 module.exports = router;

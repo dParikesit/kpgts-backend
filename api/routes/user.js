@@ -4,26 +4,16 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const authChecker = require("../middleware/auth-checker");
+const adminChecker = require("../middleware/admin-checker");
 const User = require("../models/user");
 const UserDetail = require("../models/user-detail");
-const pagination_controller = require('../controllers/pagination.controller');
+const pagination_controller = require("../controllers/pagination.controller");
 
-//Admin
-const isAdmin = function(req, res, next) {
-  if (req.user.role == "Admin") {
-    next;
-  } else {
-    return res.status(401).json({
-      error: 'User not authenticated'
-    });
-  }
-}
-
-router.get("/admin/dashboard/all", isAdmin, (req,res) => {
+router.get("/admin/dashboard/all", adminChecker, (req, res) => {
   pagination_controller.getAll(req, res, UserDetail, "email sekolah");
 });
 
-// router.get("/admin/dashboard/:id", isAdmin, (req,res) => {
+// router.get("/admin/dashboard/:id", adminChecker, (req,res) => {
 // });
 
 // User

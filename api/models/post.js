@@ -28,6 +28,7 @@ const postSchema = new mongoose.Schema({
     encoding: String,
     mimetype: String,
     ext: String,
+    required: true,
   },
 });
 
