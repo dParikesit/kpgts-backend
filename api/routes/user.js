@@ -17,9 +17,9 @@ router.get("/admin/dashboard/all", adminChecker, (req, res) => {
 // });
 
 // User
-router.post("/user/register", (req, res, next) => {
+router.post("/user/register", (req, res) => {
   bcrypt.hash(req.body.password, 10, (err, hash) => {
-    console.log(req.body.password)
+    console.log(req.body.password);
     if (err) {
       res.status(500).json({
         message: "Hashing error",
@@ -52,7 +52,7 @@ router.post("/user/register", (req, res, next) => {
   });
 });
 
-router.post("/user/login", (req, res, next) => {
+router.post("/user/login", (req, res) => {
   User.find({ email: req.body.email }).then((user) => {
     if (user.length < 1) {
       res.status(404).json({
@@ -107,10 +107,10 @@ router.post("/user/logout", authChecker, (req, res) => {
 router.post("/user/detail", authChecker, (req, res) => {
   let user = {};
   user.email = req.body.email;
-  user.name = req.body.name
-  user.sekolah = req.body.sekolah
-  user.telepon = req.body.telepon
-  user.mapel = req.body.mapel
+  user.name = req.body.name;
+  user.sekolah = req.body.sekolah;
+  user.telepon = req.body.telepon;
+  user.mapel = req.body.mapel;
 
   UserDetail.findOneAndUpdate({ email: user.email }, user, { upsert: true })
     .then((result) => {
@@ -147,5 +147,24 @@ router.get("/user/detail", authChecker, (req, res) => {
         res.status(200).json(detail);
       });
   });
+});
+
+router.get("/user", authChecker, adminChecker, async (req, res) => {
+  let emailList = await User.find({ role: "User" }, 'email').exec();
+  let email = []
+  await emailList.map((user)=>{
+    email.push(user.email)
+  })
+  UserDetail.find()
+    .where("email")
+    .in(email)
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      res.status(500).json({
+        message: err,
+      });
+    });
 });
 module.exports = router;

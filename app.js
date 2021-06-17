@@ -2,6 +2,7 @@ require("dotenv").config();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const express = require("express");
+const morgan = require('morgan')
 const app = express();
 const mongoose = require("mongoose");
 
@@ -25,6 +26,7 @@ app.use(
     origin: process.env.FRONTEND,
   })
 );
+app.use(morgan('tiny'))
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
